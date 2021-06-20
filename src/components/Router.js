@@ -1,11 +1,11 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import Host from "./Host";
 import Party from "./Party";
 import Join from "./Join";
 import HomePage from "./HomePage";
 const Router = () => (
-  <BrowserRouter>
+  <HashRouter>
     <Switch>
       <Route exact path="/" component={HomePage} />
       <Route exact path="/host" component={Host} />
@@ -13,6 +13,6 @@ const Router = () => (
       <Route exact path="/party" component={Host} />
       <Route exact path="/party/:host_id" component={Party} />
     </Switch>
-  </BrowserRouter>
+  </HashRouter>
 );
 export default Router;
