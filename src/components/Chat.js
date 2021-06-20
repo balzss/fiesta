@@ -1,6 +1,4 @@
 import React from "react";
-import "emoji-mart/css/emoji-mart.css";
-import { Picker } from "emoji-mart";
 import { send_chat } from "../utils/webRTC_utils";
 import ChatBubble from "./ChatBubble";
 import UserList from "./UserList";
@@ -9,34 +7,14 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.chatBottom = React.createRef();
+    this.state = {
+      message: '',
+    };
   }
 
   componentDidUpdate() {
     this.chatBottom.current.scrollIntoView({ behavior: "smooth" });
   }
-
-  state = {
-    showEmojis: false,
-    message: ""
-  };
-  showEmojis = e => {
-    this.setState({
-      showEmojis: true
-    });
-  };
-  closeMenu = () => {
-    this.setState({
-      showEmojis: false
-    });
-  };
-
-  addEmoji = e => {
-    let emoji = e.native;
-    this.setState({
-      message: this.state.message + emoji
-    });
-    this.closeMenu();
-  };
 
   add_text = e => {
     this.setState({ message: e.target.value });
@@ -58,58 +36,33 @@ class Chat extends React.Component {
 
   render() {
     return (
-      <div className="box">
+      <div className="chat-panel box">
         <UserList
-          connected_users={this.props.connected_users}
+          connectedUsers={this.props.connected_users}
           only_host_controls={this.props.only_host_controls}
           is_host={this.props.is_host}
-        ></UserList>
-        <div className="box chat_box" onClick={this.closeMenu}>
+        />
+        <div className="chat-message-panel">
           {this.props.chat_log.map((chat_data, index) => {
-            return <ChatBubble key={index} chat_data={chat_data}></ChatBubble>;
+            return <ChatBubble key={index} chat_data={chat_data}/>;
           })}
           <span ref={this.chatBottom} id="chat-bottom" />
         </div>
         <form onSubmit={this.send_message}>
           <div className="field is-grouped">
-            <p className="">
-              {this.state.showEmojis ? (
-                <>
-                  <Picker
-                    onSelect={this.addEmoji}
-                    ref={el => (this.emojiPicker = el)}
-                  />
-                  <button className="button emoji-button">
-                    <span className="icon is-small">
-                      <p onClick={this.closeMenu} className="emoji">
-                        {"❌"}
-                      </p>
-                    </span>
-                  </button>
-                </>
-              ) : (
-                <button className="button emoji-button">
-                  <span className="icon is-small">
-                    <p onClick={this.showEmojis} className="emoji">
-                      {String.fromCodePoint(0x1f60a)}
-                    </p>
-                  </span>
-                </button>
-              )}
-            </p>
             <p className="control is-expanded">
               <input
                 className="input"
                 value={this.state.message}
                 type="text"
-                placeholder="Chat.."
+                placeholder="Chat..."
                 onChange={this.add_text}
               />
             </p>
             <p className="control">
               <button className="button is-primary">
                 <i
-                  class="icon icon ion-ios-paperplane"
+                  className="icon icon ion-ios-paperplane"
                   style={{
                     fontSize: "xx-large",
                     alignItems: "normal",

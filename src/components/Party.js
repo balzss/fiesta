@@ -1,8 +1,6 @@
 import React from "react";
-import Navbar from "./Navbar";
-import Chat from "./Chat";
+import ChatPanel from "./Chat";
 import Player from "./Player";
-import UserList from "./UserList";
 import ChangeVideo from "./ChangeVideo";
 
 import { get_data } from "../utils/data_storage_utils";
@@ -13,8 +11,13 @@ import {
 } from "../utils/webRTC_utils";
 import { ToastContainer, toast } from "react-toastify";
 // css
-import "../css/App.css";
 import "react-toastify/dist/ReactToastify.min.css";
+
+function getRandomTagColor() {
+  const bulmaTagColors = ['is-black', 'is-dark', 'is-light', 'is-white', 'is-primary', 'is-link', 'is-info', 'is-success', 'is-warning', 'is-danger'];
+  const color_code = bulmaTagColors[Math.floor(Math.random() * bulmaTagColors.length)];
+  return color_code;
+}
 
 // https://stackoverflow.com/questions/54017100/how-to-integrate-youtube-iframe-api-in-reactjs-solution
 class Party extends React.Component {
@@ -40,8 +43,8 @@ class Party extends React.Component {
   }
 
   componentDidMount() {
-    var data = get_data(this.props.match.params.host_id);
-    const color_code = Math.floor(Math.random() * 16777215).toString(16);
+    const data = get_data(this.props.match.params.host_id);
+    const color_code = getRandomTagColor();
     // i.e if host
     if (data) {
       if (!window.peer_obj) {
@@ -84,8 +87,8 @@ class Party extends React.Component {
 
   setUserName = e => {
     e.preventDefault();
-    const color_code = Math.floor(Math.random() * 16777215).toString(16);
-    var connected_users = this.state.connected_users;
+    const color_code = getRandomTagColor();
+    const connected_users = this.state.connected_users;
     connected_users[this.state.peer_id] = {
       user_name: e.target.user_name.value,
       color_code: color_code,
@@ -125,8 +128,7 @@ class Party extends React.Component {
 
   render() {
     return (
-      <div>
-        <Navbar></Navbar>
+      <div className="party-container">
         <ToastContainer
           position="bottom-left"
           autoClose={3000}
@@ -158,7 +160,7 @@ class Party extends React.Component {
                     />
                   </p>
                   <p className="control">
-                    <button className="button is-primary">🥳 Party</button>
+                    <button className="button is-primary">Party</button>
                   </p>
                 </div>
               </form>
@@ -167,15 +169,7 @@ class Party extends React.Component {
           <button className="modal-close is-large" aria-label="close"></button>
         </div>
 
-        <div
-          className={
-            "modal " +
-            (this.state.invite_popup_shown === false &&
-            this.state.is_host === true
-              ? "is-active"
-              : "")
-          }
-        >
+        <div className={"modal " + (this.state.invite_popup_shown ? "is-active" : "")}>
           <div className="modal-background" onClick={this.closeModal}></div>
           <div className="modal-content">
             <div className="box">
@@ -209,38 +203,29 @@ class Party extends React.Component {
             className="modal-close is-large"
             aria-label="close"
             onClick={this.closeModal}
-          ></button>
+          />
         </div>
 
-        <div className="section">
-          <div className="container">
-            <div className="tile is-ancestor">
-              <div className="tile is-8 left_tile_custom">
-                <Player
-                  youtube_video_id={this.state.youtube_video_id}
-                  youtube_current_pos={this.state.youtube_current_pos}
-                  is_host={this.state.is_host}
-                  isStateChangeFromBroadcastData={
-                    this.state.isStateChangeFromBroadcastData
-                  }
-                  player_state={this.state.player_state}
-                ></Player>
-                {(this.state.only_host_controls === false ||
-                  this.state.is_host === true) && <ChangeVideo></ChangeVideo>}
-              </div>
-              <div className="chat-window">
-                <Chat
-                  connected_users={this.state.connected_users}
-                  only_host_controls={this.state.only_host_controls}
-                  user_name={this.state.user_name}
-                  chat_log={this.state.chat_log}
-                  is_host={this.state.is_host}
-                  color_code={this.state.color_code}
-                ></Chat>
-              </div>
-            </div>
-          </div>
+        <div>
+          <Player
+            youtube_video_id={this.state.youtube_video_id}
+            youtube_current_pos={this.state.youtube_current_pos}
+            is_host={this.state.is_host}
+            isStateChangeFromBroadcastData={
+              this.state.isStateChangeFromBroadcastData
+            }
+            player_state={this.state.player_state}
+          />
+          {(this.state.only_host_controls === false || this.state.is_host === true) && <ChangeVideo/>}
         </div>
+        <ChatPanel
+          connected_users={this.state.connected_users}
+          only_host_controls={this.state.only_host_controls}
+          user_name={this.state.user_name}
+          chat_log={this.state.chat_log}
+          is_host={this.state.is_host}
+          color_code={this.state.color_code}
+        />
       </div>
     );
   }

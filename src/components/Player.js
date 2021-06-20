@@ -33,10 +33,12 @@ class Player extends React.Component {
     }
   };
   loadVideo = () => {
-    this.state.player = new window.YT.Player(`youtube-player-iframe`, {
+    const playerHeight = Math.round(window.innerHeight * 0.7);
+    const playerWidth = Math.round(playerHeight * 16/9);
+    this.state.player = new window.YT.Player('youtube-player-iframe', {
       videoId: this.props.youtube_video_id,
-      width: 830,
-      height: 450,
+      width: playerWidth,
+      height: playerHeight,
       playerVars: {
         start: Math.ceil(this.props.youtube_current_pos)
       },

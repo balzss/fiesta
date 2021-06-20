@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import App from "./App";
 import Host from "./Host";
 import Party from "./Party";
 import Join from "./Join";
@@ -9,7 +8,6 @@ const Router = () => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/" component={HomePage} />
-      <Route exact path="/h" component={HomePage} />
       <Route exact path="/host" component={Host} />
       <Route exact path="/join" component={Join} />
       <Route exact path="/party" component={Host} />
