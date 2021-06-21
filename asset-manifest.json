@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/fiesta/static/css/main.232993f6.chunk.css",
-    "main.js": "/fiesta/static/js/main.84308788.chunk.js",
-    "main.js.map": "/fiesta/static/js/main.84308788.chunk.js.map",
+    "main.js": "/fiesta/static/js/main.c542258b.chunk.js",
+    "main.js.map": "/fiesta/static/js/main.c542258b.chunk.js.map",
     "runtime-main.js": "/fiesta/static/js/runtime-main.dbdeaa28.js",
     "runtime-main.js.map": "/fiesta/static/js/runtime-main.dbdeaa28.js.map",
     "static/css/2.6010d4dc.chunk.css": "/fiesta/static/css/2.6010d4dc.chunk.css",
     "static/js/2.bdb72f16.chunk.js": "/fiesta/static/js/2.bdb72f16.chunk.js",
     "static/js/2.bdb72f16.chunk.js.map": "/fiesta/static/js/2.bdb72f16.chunk.js.map",
     "index.html": "/fiesta/index.html",
-    "precache-manifest.b76ecc3ccc12d67417f5808bfc2ec7b2.js": "/fiesta/precache-manifest.b76ecc3ccc12d67417f5808bfc2ec7b2.js",
+    "precache-manifest.638051bb594ddb62e03f28bacef3f620.js": "/fiesta/precache-manifest.638051bb594ddb62e03f28bacef3f620.js",
     "service-worker.js": "/fiesta/service-worker.js",
     "static/css/2.6010d4dc.chunk.css.map": "/fiesta/static/css/2.6010d4dc.chunk.css.map",
     "static/css/main.232993f6.chunk.css.map": "/fiesta/static/css/main.232993f6.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.6010d4dc.chunk.css",
     "static/js/2.bdb72f16.chunk.js",
     "static/css/main.232993f6.chunk.css",
-    "static/js/main.84308788.chunk.js"
+    "static/js/main.c542258b.chunk.js"
   ]
 }
