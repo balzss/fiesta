@@ -2,112 +2,68 @@ import { update_data } from "./data_storage_utils";
 
 export var global_this_obj = null;
 
-export function createConnection(
-  thisObj,
-  is_host,
-  host_id = null,
-  previous_id = null
-) {
-  let peer_js_url = process.env.REACT_APP_PEERJS;
-  let turn_url = process.env.REACT_APP_TURN;
-  let turn_username = process.env.REACT_APP_TURN_USERNAME;
-  let turn_credentials = process.env.REACT_APP_TURN_CREDENTIALS;
-  const Peer = window.Peer;
-  const settings = {
-    debug: 2,
-    // iceTransportPolicy: "relay",
-    config: {
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+export const createConnection = (is_host, host_id = null, previous_id = null) =>
+  new Promise((resolve, reject) => {
+    let peer_js_url = process.env.REACT_APP_PEERJS;
+    let turn_url = process.env.REACT_APP_TURN;
+    let turn_username = process.env.REACT_APP_TURN_USERNAME;
+    let turn_credentials = process.env.REACT_APP_TURN_CREDENTIALS;
+    const Peer = window.Peer;
+    const settings = {
+      debug: 2,
+      // iceTransportPolicy: "relay",
+      config: {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      }
+    };
+    if (peer_js_url) {
+      settings.host = peer_js_url;
+      settings.port = "";
+      settings.path = "/myapp";
     }
-  };
-  if (peer_js_url) {
-    settings.host = peer_js_url;
-    settings.port = "";
-    settings.path = "/myapp";
-  }
-  if (turn_url) {
-    settings.config.iceServers.push({
-      urls: turn_url,
-      username: turn_username,
-      credential: turn_credentials
-    });
-  }
-
-  if (previous_id) {
-    var peer = new Peer(previous_id, settings);
-  } else {
-    var peer = new Peer(settings);
-  }
-
-  window.peer_obj = peer;
-  window.is_host = is_host;
-  if (is_host !== true) {
-    var conn = peer.connect(host_id);
-    handle_connection(conn);
-  }
-
-  peer.on("open", function(id) {
-    console.log("MY peer ID is " + peer.id);
-    window.peer_id = peer.id;
-    thisObj.setState({
-      peer_id: peer.id
-    });
-    if (window.is_host === true) {
-      thisObj.setState({
-        host_peer_id: peer.id
+    if (turn_url) {
+      settings.config.iceServers.push({
+        urls: turn_url,
+        username: turn_username,
+        credential: turn_credentials
       });
     }
-  });
 
-  //   Initializes connection
-  peer.on("connection", function(conn) {
-    console.log("connection called");
-    handle_connection(conn);
-  });
+    if (previous_id) {
+      var peer = new Peer(previous_id, settings);
+    } else {
+      var peer = new Peer(settings);
+    }
 
-  peer.on("close", function() {
-    console.log("peer closed");
-    window.global_this_obj.notify("Network disconnected please refresh", 10000);
-  });
+    window.peer_obj = peer;
+    window.is_host = is_host;
+    if (is_host !== true) {
+      var conn = peer.connect(host_id);
+      handle_connection(conn);
+    }
 
-  peer.on("disconnected", function() {
-    console.log("peer disconnected");
-    // peer.reconnect();
-    window.global_this_obj.notify("Network disconnected please refresh", 10000);
-  });
-
-  // peer.on("error", function(err) {
-  // window.global_this_obj.notify("Network disconnected please refresh",10000);
-
-  //   console.log(`peerjs error ${err}`);
-  //   var x = 0;
-  //   var intervalID = setInterval(function() {
-  //     if (is_online()) {
-  //       createConnection(
-  //         window.global_this_obj,
-  //         window.is_host,
-  //         window.global_this_obj.props.match.params.host_id,
-  //         window.peer_id
-  //       );
-  //       window.clearInterval(intervalID);
-  //     }
-
-  //     if (++x === 10) {
-  //       window.clearInterval(intervalID);
-  //     }
-  //   }, 1000);
-  // });
-}
-
-function is_online() {
-  fetch("https://corona-api.nishit.xyz/country/in")
-    .then(response => {
-      return true;
-    })
-    .catch(error => {
-      return false;
+    peer.on("open", function(id) {
+      window.peer_id = peer.id;
+      resolve(peer.id, window.is_host);
     });
-}
+
+    //   Initializes connection
+    peer.on("connection", function(conn) {
+      console.log("connection called");
+      handle_connection(conn);
+    });
+
+    peer.on("close", function() {
+      console.log("peer closed");
+      window.global_this_obj.notify("Network disconnected please refresh", 10000);
+    });
+
+    peer.on("disconnected", function() {
+      console.log("peer disconnected");
+      // peer.reconnect();
+      window.global_this_obj.notify("Network disconnected please refresh", 10000);
+    });
+  });
 
 function handle_connection(conn) {
   window.peer_ids.push(conn.peer);
@@ -117,7 +73,6 @@ function handle_connection(conn) {
     console.log(data);
     data_handler(data);
   });
-  console.log("Handled connection");
 
   conn.on("close", function() {
     var connected_users = window.global_this_obj.state.connected_users;
@@ -136,15 +91,6 @@ function handle_connection(conn) {
   window.connections.push(conn);
 
   if (window.is_host === true) {
-    // setTimeout(function() {
-    //   sync_video();
-    //   var msg_user_list = {
-    //     data_type: "user_list",
-    //     user_list: window.global_this_obj.state.connected_users,
-    //     only_host_controls: window.global_this_obj.state.only_host_controls
-    //   };
-    //   send_data(msg_user_list);
-    // }, 3000);
     broadcast_new_connection(conn.peer);
   }
 }

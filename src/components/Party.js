@@ -47,7 +47,7 @@ class Party extends React.Component {
     // i.e if host
     if (data) {
       if (!window.peer_obj) {
-        createConnection(this, true, null, this.props.match.params.host_id);
+        createConnection(true, null, this.props.match.params.host_id);
       }
 
       if (!data.connected_users) {
@@ -80,7 +80,7 @@ class Party extends React.Component {
       });
     } else {
       // Not a host: Create connection
-      createConnection(this, false, this.props.match.params.host_id);
+      createConnection(false, this.props.match.params.host_id);
     }
   }
 

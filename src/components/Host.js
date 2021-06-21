@@ -14,14 +14,15 @@ class Host extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
     const video_id = this.parseIdFromURL(e.target.youtubeLink.value);
-    console.log(e.target.onlyHost.checked);
     this.setState({
       user_name: e.target.userName.value,
       youtube_video_id: video_id,
       only_host_controls: e.target.onlyHost.checked,
       submitted: true
     });
-    createConnection(this, true);
+    createConnection(true).then((peerId) => {
+      this.setState({host_peer_id: peerId});
+    });
   };
   parseIdFromURL = url => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
