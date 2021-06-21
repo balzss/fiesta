@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "acb33a1d52443bfdaee565560e05ac29",
+    "revision": "76ac1f15147821c5275cabdf24af9525",
     "url": "/fiesta/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fiesta/static/css/2.6010d4dc.chunk.css"
   },
   {
-    "revision": "0edbb8921546a070f80a",
+    "revision": "a11598324f08114c2e10",
     "url": "/fiesta/static/css/main.0fa9bc6f.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fiesta/static/js/2.91822a05.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "0edbb8921546a070f80a",
-    "url": "/fiesta/static/js/main.64547ec6.chunk.js"
+    "revision": "a11598324f08114c2e10",
+    "url": "/fiesta/static/js/main.4f43a5ab.chunk.js"
   },
   {
     "revision": "9f9b0c7a8d1e5fa9475c",
