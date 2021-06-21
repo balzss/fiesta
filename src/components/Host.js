@@ -41,7 +41,7 @@ class Host extends React.Component {
         <Redirect
           push
           to={{
-            pathname: "party/" + this.state.host_peer_id,
+            pathname: this.state.host_peer_id,
             state: this.state
           }}
         ></Redirect>

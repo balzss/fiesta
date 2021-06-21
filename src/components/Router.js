@@ -6,8 +6,7 @@ const Router = () => (
   <HashRouter>
     <Switch>
       <Route exact path="/" component={Host} />
-      <Route exact path="/party" component={Host} />
-      <Route exact path="/party/:host_id" component={Party} />
+      <Route exact path="/:host_id" component={Party} />
     </Switch>
   </HashRouter>
 );
