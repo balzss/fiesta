@@ -63,7 +63,7 @@ class Host extends React.Component {
                           type="text"
                           name="userName"
                           required
-                        ></input>
+                        />
                       </div>
                     </div>
 
@@ -72,22 +72,17 @@ class Host extends React.Component {
                       <div className="control">
                         <input
                           className="input"
-                          ref={this.youtubeLinkRef}
                           placeholder="The Youtube link to be shared"
                           type="url"
                           name="youtubeLink"
                           required
-                        ></input>
+                        />
                       </div>
                     </div>
 
                     <div className="field">
                       <label className="checkbox">
-                        <input
-                          type="checkbox"
-                          name="onlyHost"
-                          ref={this.onlyHostRef}
-                        />
+                        <input type="checkbox" name="onlyHost"/>
                         &nbsp;Only allow host to control video
                       </label>
                     </div>

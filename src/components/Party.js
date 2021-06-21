@@ -14,9 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
 function getRandomTagColor() {
-  const bulmaTagColors = ['is-black', 'is-dark', 'is-light', 'is-white', 'is-primary', 'is-link', 'is-info', 'is-success', 'is-warning', 'is-danger'];
-  const color_code = bulmaTagColors[Math.floor(Math.random() * bulmaTagColors.length)];
-  return color_code;
+  const bulmaTagColors = ['is-black', 'is-dark', 'is-light', 'is-primary', 'is-link', 'is-info', 'is-success', 'is-warning', 'is-danger'];
+  return bulmaTagColors[Math.floor(Math.random() * bulmaTagColors.length)];
 }
 
 // https://stackoverflow.com/questions/54017100/how-to-integrate-youtube-iframe-api-in-reactjs-solution
