@@ -61,14 +61,7 @@ class Chat extends React.Component {
             </p>
             <p className="control">
               <button className="button is-primary">
-                <i
-                  className="icon icon ion-ios-paperplane"
-                  style={{
-                    fontSize: "xx-large",
-                    alignItems: "normal",
-                    height: "1em"
-                  }}
-                ></i>
+                <ion-icon name="paper-plane"></ion-icon>
               </button>
             </p>
           </div>

@@ -29,15 +29,11 @@ export const createConnection = (is_host, host_id = null, previous_id = null) =>
       });
     }
 
-    if (previous_id) {
-      var peer = new Peer(previous_id, settings);
-    } else {
-      var peer = new Peer(settings);
-    }
+    const peer = previous_id ? new Peer(previous_id, settings) : new Peer(settings);
 
     window.peer_obj = peer;
     window.is_host = is_host;
-    if (is_host !== true) {
+    if (!is_host) {
       var conn = peer.connect(host_id);
       handle_connection(conn);
     }
@@ -66,11 +62,7 @@ export const createConnection = (is_host, host_id = null, previous_id = null) =>
   });
 
 function handle_connection(conn) {
-  window.peer_ids.push(conn.peer);
-
   conn.on("data", function(data) {
-    console.log("data received");
-    console.log(data);
     data_handler(data);
   });
 
@@ -113,13 +105,10 @@ function data_handler(data) {
   }
 }
 
-function send_data(data) {
-  console.log("Sending data: ");
-  console.log(data);
-  var connections = window.connections;
-  for (var i = 0; i < connections.length; i++) {
-    connections[i].send(data);
-  }
+function broadcastData(data) {
+  window.connections.forEach((conn) => {
+    conn.send(data);
+  });
 }
 
 function broadcast_new_connection(peer_id) {
@@ -133,7 +122,7 @@ function broadcast_new_connection(peer_id) {
 }
 
 function connect_to_peer(peer_id) {
-  var conn = window.peer_obj.connect(peer_id);
+  const conn = window.peer_obj.connect(peer_id);
   handle_connection(conn);
 }
 
@@ -164,7 +153,7 @@ function chat_handler(chat_data) {
 
 export function send_chat(msg, user_name, is_host, color_code) {
   var msg_json = generate_chat_structure(msg, user_name, is_host, color_code);
-  send_data(msg_json);
+  broadcastData(msg_json);
   chat_handler(msg_json);
 }
 
@@ -234,8 +223,8 @@ export function sync_video(event = null) {
   if (window.global_this_obj.state.isStateChangeFromBroadcastData) {
     return;
   }
-  var payload_data = fetch_current_video_status(event);
-  send_data(payload_data);
+  const payloadData = fetch_current_video_status(event);
+  broadcastData(payloadData);
 }
 
 function fetch_current_video_status(event) {
@@ -289,7 +278,7 @@ function handle_intro(data) {
         user_list: window.global_this_obj.state.connected_users,
         only_host_controls: window.global_this_obj.state.only_host_controls
       };
-      send_data(msg_user_list);
+      broadcastData(msg_user_list);
     }, 250);
   }
 }
@@ -309,7 +298,7 @@ export function introduce(user_name, color_code) {
     color_code: color_code,
     time_stamp: Date.now()
   };
-  send_data(format);
+  broadcastData(format);
 }
 
 export function change_video(video_id, broadcast = false) {
@@ -320,14 +309,14 @@ export function change_video(video_id, broadcast = false) {
       data_type: "change_video",
       video_id: video_id
     };
-    send_data(format);
+    broadcastData(format);
     // broadcast it to everyone
   }
 }
 
 export function parseIdFromURL(url) {
-  var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  var match = url.match(regExp);
+  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
   if (match && match[2].length === 11) {
     return match[2];
   } else {

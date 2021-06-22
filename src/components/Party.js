@@ -37,50 +37,50 @@ class Party extends React.Component {
   constructor(props) {
     super(props);
     window.global_this_obj = this;
-    window.peer_ids = [];
     window.connections = [];
   }
 
   componentDidMount() {
-    const data = get_data(this.props.match.params.host_id);
-    const color_code = getRandomTagColor();
+    const hostId = this.props.match.params.host_id;
+    const data = get_data(hostId);
+    const colorCode = getRandomTagColor();
+
+    const connected_users = data.connected_users || {};
+    const reconnect_users = JSON.parse(JSON.stringify(connected_users));
+
     // i.e if host
     if (data) {
       if (!window.peer_obj) {
-        createConnection(true, null, this.props.match.params.host_id);
+        createConnection(true, null, hostId);
       }
 
       if (!data.connected_users) {
-        var connected_users = {};
-        connected_users[this.props.match.params.host_id] = {
-          user_name: data.user_name,
-          color_code: color_code,
+        connected_users[hostId] = {
+          user_name: data.userName,
+          color_code: colorCode,
           is_host: true
         };
       } else {
-        var connected_users = data.connected_users;
-        // https://stackoverflow.com/questions/38416020/deep-copy-in-es6-using-the-spread-syntax
-        var reconnect_users = JSON.parse(JSON.stringify(connected_users));
-
-        delete reconnect_users[this.props.match.params.host_id];
+        delete reconnect_users[hostId];
         bulk_connect(
           Object.keys(reconnect_users),
-          connected_users[this.props.match.params.host_id]
+          connected_users[hostId]
         );
       }
 
       this.setState({
-        peer_id: this.props.match.params.host_id,
-        user_name: data.user_name,
-        youtube_video_id: data.youtube_video_id,
-        only_host_controls: data.only_host_controls,
-        is_host: data.is_host,
+        peer_id: hostId,
+        user_name: data.userName,
+        videoUrl: data.videoUrl,
+        youtube_video_id: data.videoId,
+        only_host_controls: data.onlyHostControls,
+        is_host: data.isHost,
         connected_users: connected_users,
-        color_code: color_code
+        color_code: colorCode,
       });
     } else {
       // Not a host: Create connection
-      createConnection(false, this.props.match.params.host_id);
+      createConnection(false, hostId);
     }
   }
 
@@ -207,6 +207,7 @@ class Party extends React.Component {
 
         <div>
           <Player
+            videoUrl={this.state.videoUrl}
             youtube_video_id={this.state.youtube_video_id}
             youtube_current_pos={this.state.youtube_current_pos}
             is_host={this.state.is_host}

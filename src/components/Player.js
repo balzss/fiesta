@@ -1,5 +1,8 @@
 import React from "react";
+import ReactPlayer from 'react-player'
 import { sync_video } from "../utils/webRTC_utils";
+
+const USE_OLD_PLAYER = true;
 
 class Player extends React.Component {
   constructor(props) {
@@ -33,8 +36,12 @@ class Player extends React.Component {
     }
   };
   loadVideo = () => {
-    const playerHeight = Math.round(window.innerHeight * 0.7);
-    const playerWidth = Math.round(playerHeight * 16/9);
+    const maxPlayerWidth = Math.round(window.innerWidth * (window.innerWidth > 768 ? 0.7 : 1));
+    const maxPlayerHeight = Math.round(window.innerHeight * 0.6);
+
+    const playerWidth = Math.min(Math.round(maxPlayerHeight * 16/9), maxPlayerWidth);
+    const playerHeight = Math.min(Math.round(maxPlayerWidth * 9/16), maxPlayerHeight);
+
     this.state.player = new window.YT.Player('youtube-player-iframe', {
       videoId: this.props.youtube_video_id,
       width: playerWidth,
@@ -76,9 +83,19 @@ class Player extends React.Component {
     // if (!this.props.youtube_video_id) {
     //   return <div>Video not loaded</div>;
     // }
-    return (
+    return USE_OLD_PLAYER ? (
       <div className="player_container">
         <div id={`youtube-player-iframe`} />
+      </div>
+    ) : (
+      <div class="video-player-wrapper">
+        <ReactPlayer
+          className="video-player"
+          url={this.props.videoUrl}
+          width='100%'
+          height='100%'
+          controls
+        />
       </div>
     );
   }

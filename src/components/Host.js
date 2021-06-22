@@ -1,111 +1,116 @@
-import React from "react";
-import { createConnection } from "../utils/webRTC_utils";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
-import { store_data } from "../utils/data_storage_utils";
+import { createConnection, parseIdFromURL } from "../utils/webRTC_utils";
+import { storeData } from "../utils/data_storage_utils";
 
-class Host extends React.Component {
-  state = {
-    user_name: "",
-    youtube_video_id: "",
-    host_peer_id: null,
-    is_host: true,
-    submitted: false
-  };
-  handleSubmit = e => {
+const Host = () => {
+  const [userName, setUserName] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
+  const [clipboardHasVideo, setClipboardHasVideo] = useState(false);
+  const [hostPeerId, setHostPeerId] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (navigator.clipboard) {
+      navigator.clipboard.readText()
+        .then(text => {
+          setClipboardHasVideo(parseIdFromURL(text));
+        });
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const video_id = this.parseIdFromURL(e.target.youtubeLink.value);
-    this.setState({
-      user_name: e.target.userName.value,
-      youtube_video_id: video_id,
-      only_host_controls: e.target.onlyHost.checked,
-      submitted: true
-    });
+    setSubmitted(true);
     createConnection(true).then((peerId) => {
-      this.setState({host_peer_id: peerId});
+      setHostPeerId(peerId);
     });
   };
-  parseIdFromURL = url => {
-    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    if (match && match[2].length === 11) {
-      return match[2];
-    } else {
-      return false;
-    }
-  };
-  render() {
-    if (this.state.host_peer_id) {
-      store_data(this.state.host_peer_id, this.state);
 
-      return (
-        <Redirect
-          push
-          to={{
-            pathname: this.state.host_peer_id,
-            state: this.state
-          }}
-        ></Redirect>
-      );
-    }
+  if (hostPeerId) {
+    const videoId = clipboardHasVideo ? clipboardHasVideo : parseIdFromURL(videoUrl);
+    storeData(hostPeerId, {
+      userName,
+      videoUrl,
+      videoId,
+      isHost: true,
+      onlyHostControls: false,
+    });
     return (
-      <section className="section">
-        <div className="container">
-          <div className="columns is-centered">
-            <div className="column is-half">
-              <div className="card box">
-                <div className="card-content">
-                  <form onSubmit={this.handleSubmit}>
-                    <div className="field">
-                      <label className="label">Username</label>
-                      <div className="control">
+      <Redirect push to={{ pathname: hostPeerId }}/>
+    );
+  }
+  return (
+    <section className="section">
+      <div className="container">
+        <div className="columns is-centered">
+          <div className="column is-half">
+            <div className="card box">
+              <div className="card-content">
+                <form onSubmit={handleSubmit}>
+                  <div className="field">
+                    <label className="label">Username</label>
+                    <div className="control">
+                      <input
+                        className="input"
+                        placeholder="Please enter your username"
+                        type="text"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <label className="label">Youtube Link</label>
+                    <div className="field has-addons">
+                      <div className="control" style={{flex: '1'}}>
                         <input
                           className="input"
-                          placeholder="Please enter your username"
                           type="text"
-                          name="userName"
-                          required
+                          placeholder={clipboardHasVideo ? 'Video found in clipboard!' : 'Youtube link'}
+                          onChange={(e) => {setVideoUrl(e.target.value)}}
+                          value={videoUrl}
                         />
                       </div>
+                      {clipboardHasVideo && (
+                        <p className="control">
+                          <span className={`button ${videoUrl === '' ? 'is-primary' : 'is-static'}`}>
+                            <ion-icon name="clipboard-outline" style={{marginRight: '0.5rem'}}></ion-icon>
+                            {clipboardHasVideo}
+                          </span>
+                        </p>
+                      )}
                     </div>
 
-                    <div className="field">
-                      <label className="label">Youtube Link</label>
-                      <div className="control">
-                        <input
-                          className="input"
-                          placeholder="The Youtube link to be shared"
-                          type="url"
-                          name="youtubeLink"
-                          required
-                        />
-                      </div>
-                    </div>
+                  </div>
 
-                    <div className="field">
-                      <label className="checkbox">
-                        <input type="checkbox" name="onlyHost"/>
-                        &nbsp;Only allow host to control video
-                      </label>
-                    </div>
-                    <div className="buttons is-right">
-                      <button
-                        className={
-                          "button is-primary" +
-                          (this.state.submitted ? " is-loading" : "")
-                        }
-                      >
-                        Party
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  <div className="field">
+                    <label className="checkbox">
+                      <input type="checkbox" name="onlyHost"/>
+                      &nbsp;Only allow host to control video
+                    </label>
+                  </div>
+                  <div className="buttons is-right">
+                    <button
+                      className={
+                        "button is-primary" +
+                          (submitted ? " is-loading" : "")
+                      }
+                    >
+                      Party
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    );
-  }
-}
+      </div>
+    </section>
+
+  );
+};
 
 export default Host;
